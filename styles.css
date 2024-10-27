@@ -18,6 +18,57 @@ body {
     padding: 20px;
 }
 
+/* Input Section Container */
+#controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Input and Dropdown Styling */
+input,
+select {
+    padding: 10px;
+    margin: 5px 0;
+    border: 2px solid #3b4cca;
+    /* Pokémon blue */
+    border-radius: 5px;
+    outline: none;
+    width: 100%;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+input:focus,
+select:focus {
+    border-color: #ff0000;
+    /* Pokémon red */
+}
+
+/* Button Style */
+button {
+    padding: 10px 20px;
+    background-color: #ff0000;
+    /* Pokémon red */
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    max-width: 200px;
+    font-size: 1em;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #d91c1c;
+}
+
 /* Container for Pokémon Cards */
 #pokemon-container {
     display: flex;
@@ -71,52 +122,19 @@ body {
     font-weight: bold;
 }
 
-/* Input Section Styling */
-#controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-input,
-select {
-    padding: 8px;
-    margin: 5px;
-    border: 2px solid #3b4cca;
-    /* Pokémon blue */
-    border-radius: 5px;
-    outline: none;
-    transition: border-color 0.3s;
-}
-
-input:focus,
-select:focus {
-    border-color: #ff0000;
-    /* Pokémon red */
-}
-
-/* Button Style */
-button {
-    padding: 10px 20px;
-    background-color: #ff0000;
-    /* Pokémon red */
-    color: white;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #d91c1c;
-}
-
 /* Responsive Design */
 @media (max-width: 600px) {
     #pokemon-container {
         flex-direction: column;
         align-items: center;
+    }
+
+    .pokemon-card {
+        width: 100%;
+        max-width: 75vw;
+    }
+
+    #controls {
+        width: 90%;
     }
 }

@@ -2,6 +2,14 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 function getPokemonCards() {
     const numCards = parseInt(document.getElementById('num-cards').value);
     const category = document.getElementById('category').value.toLowerCase();
@@ -19,7 +27,8 @@ function getPokemonCards() {
             return response.json();
         })
         .then(data => {
-            const pokemonList = data.pokemon.slice(0, numCards);
+            let pokemonList = data.pokemon;
+            pokemonList = shuffleArray(pokemonList).slice(0, numCards);
 
             const pokemonDetailsPromises = pokemonList.map(pokemonItem =>
                 fetch(pokemonItem.pokemon.url).then(response => response.json())

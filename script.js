@@ -2,7 +2,6 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 
-// Move shuffleArray here so it can be used in displayPokemonCards
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -44,7 +43,7 @@ function getPokemonCards() {
                     })
                     .then(secondaryData => {
                         const secondaryPokemonList = secondaryData.pokemon.map(p => p.pokemon.name);
-                        pokemonList = pokemonList.filter(pokemon => 
+                        pokemonList = pokemonList.filter(pokemon =>
                             secondaryPokemonList.includes(pokemon.pokemon.name)
                         );
                         displayPokemonCards(pokemonList, numCards);
@@ -91,17 +90,49 @@ function displayEvolutionChain(speciesUrl) {
         .then(speciesData => fetch(speciesData.evolution_chain.url))
         .then(response => response.json())
         .then(evolutionData => {
-            const evolutionChain = [];
-            let currentStage = evolutionData.chain;
+            const evolutionContainer = document.getElementById('evolution-container');
+            evolutionContainer.innerHTML = ''; 
 
-            // Traverse through the evolution chain
+            let currentStage = evolutionData.chain;
+            const evolutionPromises = [];
+
+            
             while (currentStage) {
-                evolutionChain.push(currentStage.species.name);
-                currentStage = currentStage.evolves_to[0]; // Go to the next stage
+                evolutionPromises.push(fetch(`https://pokeapi.co/api/v2/pokemon/${currentStage.species.name}`).then(response => response.json()));
+                currentStage = currentStage.evolves_to[0];
             }
 
-            // Display the evolution chain
-            alert("Evolutionary Line: " + evolutionChain.map(name => capitalizeFirstLetter(name)).join(" → "));
+            Promise.all(evolutionPromises)
+                .then(evolutionDetails => {
+                    evolutionDetails.forEach(pokemonData => {
+                        const card = document.createElement('div');
+                        card.className = 'pokemon-card';
+                        card.innerHTML = `
+                            <h3>${pokemonData.name.toUpperCase()}</h3>
+                            <img src="${pokemonData.sprites.other['official-artwork'].front_default}" alt="${pokemonData.name}">
+                            <p>ID: ${pokemonData.id}</p>
+                            <p>Abilities: ${pokemonData.abilities.map(ability => capitalizeFirstLetter(ability.ability.name)).join(', ')}</p>
+                        `;
+                        evolutionContainer.appendChild(card);
+                    });
+                    
+                    // Show modal after loading evolution cards
+                    document.getElementById('evolution-modal').style.display = 'flex';
+                })
+                .catch(error => console.error('Error fetching evolution details:', error));
         })
         .catch(error => console.error('Error fetching evolution chain:', error));
+}
+
+// Close modal when 'x' is clicked
+document.getElementById('close-modal').onclick = function() {
+    document.getElementById('evolution-modal').style.display = 'none';
+}
+
+// Close modal when clicking outside the modal content
+window.onclick = function(event) {
+    const modal = document.getElementById('evolution-modal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
 }

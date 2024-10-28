@@ -61,6 +61,7 @@ function getPokemonCards() {
 }
 
 function displayPokemonCards(pokemonList, numCards) {
+    const pokemonContainer = document.getElementById('pokemon-container');
     pokemonList = shuffleArray(pokemonList).slice(0, numCards);
     const pokemonDetailsPromises = pokemonList.map(pokemonItem =>
         fetch(pokemonItem.pokemon.url).then(response => response.json())
@@ -68,7 +69,6 @@ function displayPokemonCards(pokemonList, numCards) {
 
     Promise.all(pokemonDetailsPromises)
         .then(detailedPokemonData => {
-            const pokemonContainer = document.getElementById('pokemon-container');
             detailedPokemonData.forEach(pokemonData => {
                 const card = document.createElement('div');
                 card.className = 'pokemon-card';
@@ -78,8 +78,30 @@ function displayPokemonCards(pokemonList, numCards) {
                     <p>ID: ${pokemonData.id}</p>
                     <p>Abilities: ${pokemonData.abilities.map(ability => capitalizeFirstLetter(ability.ability.name)).join(', ')}</p>
                 `;
+                card.addEventListener('click', () => displayEvolutionChain(pokemonData.species.url));
                 pokemonContainer.appendChild(card);
             });
         })
         .catch(error => console.error('Error fetching Pokémon details:', error));
+}
+
+function displayEvolutionChain(speciesUrl) {
+    fetch(speciesUrl)
+        .then(response => response.json())
+        .then(speciesData => fetch(speciesData.evolution_chain.url))
+        .then(response => response.json())
+        .then(evolutionData => {
+            const evolutionChain = [];
+            let currentStage = evolutionData.chain;
+
+            // Traverse through the evolution chain
+            while (currentStage) {
+                evolutionChain.push(currentStage.species.name);
+                currentStage = currentStage.evolves_to[0]; // Go to the next stage
+            }
+
+            // Display the evolution chain
+            alert("Evolutionary Line: " + evolutionChain.map(name => capitalizeFirstLetter(name)).join(" → "));
+        })
+        .catch(error => console.error('Error fetching evolution chain:', error));
 }

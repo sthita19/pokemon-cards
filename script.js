@@ -116,7 +116,6 @@ function displayEvolutionChain(speciesUrl) {
                         evolutionContainer.appendChild(card);
                     });
                     
-                    // Show modal after loading evolution cards
                     document.getElementById('evolution-modal').style.display = 'flex';
                 })
                 .catch(error => console.error('Error fetching evolution details:', error));
@@ -124,12 +123,10 @@ function displayEvolutionChain(speciesUrl) {
         .catch(error => console.error('Error fetching evolution chain:', error));
 }
 
-// Close modal when 'x' is clicked
 document.getElementById('close-modal').onclick = function() {
     document.getElementById('evolution-modal').style.display = 'none';
 }
 
-// Close modal when clicking outside the modal content
 window.onclick = function(event) {
     const modal = document.getElementById('evolution-modal');
     if (event.target === modal) {
